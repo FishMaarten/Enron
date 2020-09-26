@@ -27,10 +27,15 @@ def page_first():
 
     #Read csv from ./data folder
     pathtodata='./data/reduced_mails_FINAL.csv'
+    pathtosentiment='./data/emotional_content.csv'
     df = pd.read_csv(pathtodata, nrows=5000)
-        #convert columns to datetime
+    dfs = pd.read_csv(pathtosentiment, nrows=5000)
+    #convert columns to datetime
     df['Date'] = pd.to_datetime(df['Date'],utc=True)
     df = df.set_index(pd.DatetimeIndex(df['Date']))
+    #convert sentiment columns to datetime
+    dfs['Date'] = pd.to_datetime(dfs['Date'],utc=True)
+    dfs = dfs.set_index(pd.DatetimeIndex(dfs['Date']))
  #       return df
 
  #   data_load_state = st.text('Loading data...')
@@ -46,7 +51,10 @@ def page_first():
     #Plot email traffic
     st.line_chart(chart_data)
 
-    st.subheader('A subheader for something else')
+    #Plot sentiment
+    st.subheader('Sentiment Trends')
+    chart_data_sentiment = dfs.resample('D').size()
+    st.line_chart(chart_data_sentiment)
 
 #can also use st.dataframe() and st.table()
 
