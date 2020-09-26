@@ -2,8 +2,10 @@ import streamlit as st
 
 import numpy as np
 import pandas as pd
+import datetime
 
 def main():
+
     pages={
         'Company communications': page_first,
 	'Employee communications': page_second,
@@ -22,7 +24,10 @@ def page_first():
     #import data
 #    @st.cache
 #    def load_data():
-    df = pd.read_csv('sortedemails.csv')
+
+    #Read csv from ./data folder
+    pathtodata='./data/reduced_mails_FINAL.csv'
+    df = pd.read_csv(pathtodata, nrows=5000)
         #convert columns to datetime
     df['Date'] = pd.to_datetime(df['Date'],utc=True)
     df = df.set_index(pd.DatetimeIndex(df['Date']))
@@ -32,9 +37,13 @@ def page_first():
  #   data = load_data(10000)
  #   data_load_state.text("Done! (using st.cache)")
 
+    #Make a date selector
+    selecteddate = st.date_input("Select date range", [df.index.min(), df.index.max()])
+
+    #Resample email traffic by day
     chart_data = df.resample('D').size()
 
-    #plot
+    #Plot email traffic
     st.line_chart(chart_data)
 
     st.subheader('A subheader for something else')
