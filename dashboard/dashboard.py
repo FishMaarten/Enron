@@ -4,13 +4,31 @@ import numpy as np
 import pandas as pd
 import datetime
 
+DATA_URL = ('./data/reduced_mails_FINAL.csv')
+@st.cache
+def load_data():
+    df = pd.read_csv(DATA_URL, nrows=5000)
+    df['Date'] = pd.to_datetime(df['Date'],utc=True)
+    df = df.set_index(pd.DatetimeIndex(df['Date']))
+    return df
+
+SENTIMENT_URL = ('./data/emotional_content.csv')
+@st.cache
+def load_sentiment():
+    dfs = pd.read_csv(SENTIMENT_URL, nrows=5000)
+    dfs['Date'] = pd.to_datetime(dfs['Date'],utc=True)
+    dfs = dfs.set_index(pd.DatetimeIndex(dfs['Date']))
+    return dfs
+
 def main():
 
     pages={
         'Company communications': page_first,
-	'Employee communications': page_second,
-        'Fraud analytics': page_third,
-	}
+        'Employee communications': page_second,
+        'Employee churn analytics':page_third,
+        'Social networks': page_fourth,
+        'Fraud analytics': page_fifth,
+        }
 
     st.sidebar.title('Views')
 
@@ -25,17 +43,7 @@ def page_first():
 #    @st.cache
 #    def load_data():
 
-    #Read csv from ./data folder
-    pathtodata='./data/reduced_mails_FINAL.csv'
-    pathtosentiment='./data/emotional_content.csv'
-    df = pd.read_csv(pathtodata, nrows=5000)
-    dfs = pd.read_csv(pathtosentiment, nrows=5000)
-    #convert columns to datetime
-    df['Date'] = pd.to_datetime(df['Date'],utc=True)
-    df = df.set_index(pd.DatetimeIndex(df['Date']))
-    #convert sentiment columns to datetime
-    dfs['Date'] = pd.to_datetime(dfs['Date'],utc=True)
-    dfs = dfs.set_index(pd.DatetimeIndex(dfs['Date']))
+
  #       return df
 
  #   data_load_state = st.text('Loading data...')
@@ -43,6 +51,8 @@ def page_first():
  #   data_load_state.text("Done! (using st.cache)")
 
     #Make a date selector
+    df = load_data()
+    dfs = load_sentiment()
     selecteddate = st.date_input("Select date range", [df.index.min(), df.index.max()])
 
     #Resample email traffic by day
@@ -59,9 +69,23 @@ def page_first():
 #can also use st.dataframe() and st.table()
 
 def page_second():
-    st.subheader('A subheader here')
+    st.title('Employee communications dashboard')
+    df = load_data()
+    employee = st.selectbox("Select employee", df["From"].unique())
+
 
 def page_third():
+    st.title('Employee Churn Analytics')
+    st.subheader('A subheader here')
+
+def page_fourth():
+    st.title('Social networks')
+    df = load_data()
+    employee = st.selectbox("Select employee", df["From"].unique())
+
+
+def page_fifth():
+    st.title('Fraud Analytics')
     st.subheader('A subheader here')
 
 if __name__ == '__main__':
