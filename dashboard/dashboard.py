@@ -1,10 +1,12 @@
 import streamlit as st
-
+import streamlit_theme as stt
 import numpy as np
 import pandas as pd
 import datetime
 import networkx as nx
 import matplotlib.pyplot as plt
+
+
 
 @st.cache
 def load_data():
@@ -59,6 +61,28 @@ def page_first():
     chart_data_sentiment = dfs.resample('D').size()
     st.line_chart(chart_data_sentiment)
 
+    st.subheader('Email traffic last 24 hours')
+
+    st.subheader('Email traffic heatmap past week')
+
+    st.subheader('Email traffic past month')
+
+    st.subheader('Email traffic past year')
+
+    st.subheader('Out of hours emails past week')
+
+    st.subheader('Out of hours emails past month')
+
+    st.subheader('Out of hours emails past year')
+
+    st.subheader('Main topics mentioned in past 24 hours')
+
+    st.subheader('Main topics mentioned in past week')
+
+    st.subheader('Main topics mentioned in past month')
+
+    st.subheader('Main topics mentioned in past year')
+
 #can also use st.dataframe() and st.table()
 
 def page_second():
@@ -67,6 +91,30 @@ def page_second():
     df = load_data()
     dfs = load_sentiment()
     employee = st.selectbox("Select employee", df["From"].unique())
+
+    st.write('Time at company')
+
+    st.subheader('Overall Sentiment emails sent')
+
+    st.subheader('Overall Sentiment emails received')
+
+    st.subheader('Profanity emails sent')
+
+    st.subheader('Profanity emails received')
+
+    st.subheader('Emails sent')
+
+    st.subheader('Emails received')
+
+    st.subheader('Emails received')
+
+    st.subheader('Out of hours emails')
+
+    st.subheader('Response rate')
+
+    st.subheader('Time spent on email')
+
+
 
 
 def page_third():
@@ -114,4 +162,5 @@ def page_fifth():
     dfs = load_sentiment()
 
 if __name__ == '__main__':
+    stt.set_theme({'primary': '#1b1d88'})
     main()
