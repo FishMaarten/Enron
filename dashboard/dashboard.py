@@ -1,12 +1,10 @@
 import streamlit as st
-import streamlit_theme as stt
 import numpy as np
 import pandas as pd
 import datetime
 import networkx as nx
 import matplotlib.pyplot as plt
-
-
+import plotly.graph_objects as go
 
 @st.cache
 def load_data():
@@ -56,11 +54,53 @@ def page_first():
     #Plot email traffic
     st.line_chart(chart_data)
 
+    #Create a plotly big indicator card
+    fig = go.Figure(go.Indicator(
+        mode = "number+delta",
+        value = 400,
+        number = {'prefix': "$"},
+        delta = {'position': "top", 'reference': 320},
+        domain = {'x': [0, 1], 'y': [0, 1]}))
+
+    fig.update_layout(paper_bgcolor = "lightgray")
+    st.plotly_chart(fig)
+
     #Plot sentiment
     st.subheader('Sentiment Trends')
     chart_data_sentiment = dfs.resample('D').size()
     st.line_chart(chart_data_sentiment)
 
+    fig = go.Figure()
+
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = 200,
+        title = {"text": "Emails volume<br>"},
+        domain = {'x': [0, 0.5], 'y': [0, 0.5]},
+        delta = {'reference': 400, 'relative': True, 'position' : "bottom"}))
+
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = 350,
+        title = {"text": "Emails recieved<br>"},
+        delta = {'reference': 400, 'relative': True},
+        domain = {'x': [0, 0.5], 'y': [0.5, 1]}))
+
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = 450,
+        title = {"text": "Emails sent<br>"},
+        delta = {'reference': 400, 'relative': True},
+        domain = {'x': [0.6, 1], 'y': [0, 1]}))
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = 450,
+        title = {"text": "Another indicator<br>"},
+        delta = {'reference': 400, 'relative': True},
+        domain = {'x': [0.6, 1], 'y': [0, 1]}))
+    #Show plotly big indicator card
+    fig.update_layout(paper_bgcolor = "lightblue")
+    st.plotly_chart(fig)
     st.subheader('Email traffic last 24 hours')
 
     st.subheader('Email traffic heatmap past week')
@@ -93,6 +133,30 @@ def page_second():
     employee = st.selectbox("Select employee", df["From"].unique())
 
     st.write('Time at company')
+
+
+    #Create a plotly gauge indicator
+    fig = go.Figure()
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = 70,
+        title = {'text': "Postive"},
+        domain = {'x': [0, 1], 'y': [0, 1]}
+        ))
+    #setting range of x-axis doesn't work
+    fig.update_xaxes(range=[0,100])
+    st.plotly_chart(fig)
+
+    fig = go.Figure()
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = 30,
+        title = {'text': "Negative"},
+        domain = {'x': [0, 1], 'y': [0, 1]}
+        ))
+    #setting range of x-axis doesn't work
+    fig.update_xaxes(range=[0,100])
+    st.plotly_chart(fig)
 
     st.subheader('Overall Sentiment emails sent')
 
@@ -162,5 +226,5 @@ def page_fifth():
     dfs = load_sentiment()
 
 if __name__ == '__main__':
-    stt.set_theme({'primary': '#1b1d88'})
+
     main()
